@@ -18,6 +18,19 @@ app.post('/run-report', async (req, res) => {
     }
 });
 
+// Route to restart LXC container 'layer'
+app.post('/stop-report', async (req, res) => {
+    try {
+        // Restart LXC container 'layer'
+        const { stdout, stderr } = await exec('lxc stop layer');
+        console.log('Stopping container:', stdout);
+        res.status(200).send('Container stopped successfully.');
+    } catch (e) {
+        console.error('Error stopping container:', e);
+        res.status(500).send('Failed to stop container.');
+    }
+});
+
 // Route to run script 'insert.js'
 app.post('/run-update', async (req, res) => {
     try {
