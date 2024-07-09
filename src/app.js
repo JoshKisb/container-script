@@ -1,21 +1,10 @@
 const express = require('express');
 const { exec } = require('child_process');
+const { execShellCommand } = require('./util');
 
 const app = express();
 
 app.use(express.json());
-
-const execShellCommand = (cmd) => {
-    return new Promise((resolve, reject) => {
-        exec(cmd, (error, stdout, stderr) => {
-            if (error) {
-                reject({ error, stdout, stderr });
-            } else {
-                resolve({ stdout, stderr });
-            }
-        });
-    });
-};
 
 
 // Route to restart LXC container 'layer'
