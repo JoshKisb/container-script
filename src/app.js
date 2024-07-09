@@ -5,28 +5,41 @@ const app = express();
 
 app.use(express.json());
 
+const execShellCommand = (cmd) => {
+    return new Promise((resolve, reject) => {
+        exec(cmd, (error, stdout, stderr) => {
+            if (error) {
+                reject({ error, stdout, stderr });
+            } else {
+                resolve({ stdout, stderr });
+            }
+        });
+    });
+};
+
+
 // Route to restart LXC container 'layer'
 app.post('/run-report', async (req, res) => {
     try {
-        // Restart LXC container 'layer'
-        const { stdout, stderr } = await exec('lxc restart layer');
-        console.log('Restarting container:', stdout);
+        const { stdout, stderr } = await execShellCommand('lxc restart layer');
+        console.log('Restarting container, stdout:', stdout);
+        console.log('Restarting container, stderr:', stderr);
         res.status(200).send('Container restarted successfully.');
     } catch (e) {
-        console.error('Error restarting container:', e);
+        console.error('Error restarting container:', e.stderr);
         res.status(500).send('Failed to restart container.');
     }
 });
 
-// Route to restart LXC container 'layer'
+// Route to stop LXC container 'layer'
 app.post('/stop-report', async (req, res) => {
     try {
-        // Restart LXC container 'layer'
-        const { stdout, stderr } = await exec('lxc stop layer');
-        console.log('Stopping container:', stdout);
+        const { stdout, stderr } = await execShellCommand('lxc stop layer');
+        console.log('Stopping container, stdout:', stdout);
+        console.log('Stopping container, stderr:', stderr);
         res.status(200).send('Container stopped successfully.');
     } catch (e) {
-        console.error('Error stopping container:', e);
+        console.error('Error stopping container:', e.stderr);
         res.status(500).send('Failed to stop container.');
     }
 });
