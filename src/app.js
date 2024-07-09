@@ -7,6 +7,25 @@ const app = express();
 app.use(express.json());
 
 
+// Route to check the status of the container
+app.post('/check-report', async (req, res) => {
+    try {
+        const { stdout, stderr } = await exec('lxc list layer --format json');
+        const containers = JSON.parse(stdout);
+        const layerContainer = containers.find(container => container.name === 'layer');
+        
+        if (layerContainer && layerContainer.state === 'RUNNING') {
+            res.json({ status: 'running' });
+        } else {
+            res.json({ status: 'stopped' });
+        }
+    } catch (e) {
+        console.error('Error checking container status:', e);
+        res.status(500).send('Failed to check container status.');
+    }
+});
+
+
 // Route to restart LXC container 'layer'
 app.post('/run-report', async (req, res) => {
     try {
