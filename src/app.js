@@ -37,7 +37,7 @@ app.post('/stop-report', async (req, res) => {
 app.post('/run-update', async (req, res) => {
     try {
         // Run script 'insert.js'
-        const { stdout, stderr, error } = await execShellCommand('lxc exec layer -- node icyd-app/insert.js');
+        const { stdout, stderr, error } = await execShellCommand('lxc exec layer -- bash -c "source /root/.nvm/nvm.sh && node /root/icyd-app/insert.js"');
         console.log('Running insert script, stdout:', stdout);
         console.log('Running insert script, stderr:', stderr);
         if (error) {
