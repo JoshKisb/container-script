@@ -10,13 +10,13 @@ app.use(express.json());
 // Route to restart LXC container 'layer'
 app.post('/run-report', async (req, res) => {
     try {
-        const { stdout, stderr } = await execShellCommand('lxc restart layer');
-        console.log('Restarting container, stdout:', stdout);
-        console.log('Restarting container, stderr:', stderr);
+        const { stdout, stderr } = await execShellCommand('lxc start layer');
+        console.log('Starting container, stdout:', stdout);
+        console.log('Starting container, stderr:', stderr);
         res.status(200).send('Container restarted successfully.');
     } catch (e) {
-        console.error('Error restarting container:', e.stderr);
-        res.status(500).send('Failed to restart container.');
+        console.error('Error starting container:', e.stderr);
+        res.status(500).send('Failed to start container.');
     }
 });
 
