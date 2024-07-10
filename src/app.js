@@ -13,7 +13,7 @@ app.post('/check-report', async (req, res) => {
         const { stdout, stderr } = await execShellCommand('lxc list layer --format json');
         const containers = JSON.parse(stdout);
         const layerContainer = containers.find(container => container.name === 'layer');
-        
+        console.log("debug", layerContainer)
         if (layerContainer && layerContainer.status === 'Running') {
             res.json({ status: 'running' });
         } else {
