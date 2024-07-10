@@ -14,7 +14,7 @@ app.post('/check-report', async (req, res) => {
         const containers = JSON.parse(stdout);
         const layerContainer = containers.find(container => container.name === 'layer');
         
-        if (layerContainer && layerContainer.state === 'RUNNING') {
+        if (layerContainer && layerContainer.status === 'Running') {
             res.json({ status: 'running' });
         } else {
             res.json({ status: 'stopped' });
