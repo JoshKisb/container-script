@@ -11,7 +11,10 @@ connectDB().catch(err => {
     process.exit(1);  
 });
 
-app.get('/download-report', async (req, res) => {
+app.get('/download-report', (req, res, next) => {
+    req.setTimeout(120000);  // 2 minutes
+    next();
+}, async (req, res) => {
     try {
       const rows = await fetchReportData();
       res.json(rows); 
