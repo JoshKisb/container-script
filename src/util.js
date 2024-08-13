@@ -4,11 +4,11 @@ const { Client } = require('pg');
 
 // PostgreSQL client configuration
 const client = new Client({
-  host: 'your-db-host',
-  port: 5432,
-  user: 'your-username',
-  password: 'your-password',
-  database: 'your-database'
+  host: '204.27.60.226',
+  port: 5433,
+  user: 'sk',
+  password: 'sk123',
+  database: 'ovc'
 });
 
 // Connect to PostgreSQL
