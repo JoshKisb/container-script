@@ -23,9 +23,9 @@ const connectDB = async () => {
 };
 
 // Query the view
-const fetchReportData = async () => {
+const fetchReportData = async (limit = 100) => {
   try {
-    const result = await client.query('SELECT x.* FROM public.program_instance_base_view x');
+    const result = await client.query('SELECT x.* FROM public.program_instance_base_view x LIMIT 100');
     return result.rows;
   } catch (err) {
     console.error('Query error', err.stack);
