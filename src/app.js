@@ -1,6 +1,6 @@
 const express = require('express');
 const { exec } = require('child_process');
-const { execShellCommand } = require('./util');
+const { execShellCommand, connectDB, fetchReportData } = require('./util');
 
 const app = express();
 
