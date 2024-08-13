@@ -6,6 +6,19 @@ const app = express();
 
 app.use(express.json());
 
+connectDB().catch(err => {
+    console.error('Failed to connect to the database');
+    process.exit(1);  
+});
+
+app.get('/download-report', async (req, res) => {
+    try {
+      const rows = await fetchReportData();
+      res.json(rows); 
+    } catch (err) {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 // Route to check the status of the container
 app.post('/check-report', async (req, res) => {

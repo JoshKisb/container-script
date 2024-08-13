@@ -1,5 +1,37 @@
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
+const { Client } = require('pg');
+
+// PostgreSQL client configuration
+const client = new Client({
+  host: 'your-db-host',
+  port: 5432,
+  user: 'your-username',
+  password: 'your-password',
+  database: 'your-database'
+});
+
+// Connect to PostgreSQL
+const connectDB = async () => {
+  try {
+    await client.connect();
+    console.log('Connected to PostgreSQL');
+  } catch (err) {
+    console.error('Connection error', err.stack);
+    throw err;
+  }
+};
+
+// Query the view
+const fetchReportData = async () => {
+  try {
+    const result = await client.query('SELECT x.* FROM public.program_instance_base_view x');
+    return result.rows;
+  } catch (err) {
+    console.error('Query error', err.stack);
+    throw err;
+  }
+};
 
 // Utility function to execute shell commands and log output
 const execShellCommand = async (cmd) => {
@@ -11,4 +43,4 @@ const execShellCommand = async (cmd) => {
     }
 };
 
-module.exports = { execShellCommand };
+module.exports = { execShellCommand, connectDB, fetchReportData };
