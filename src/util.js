@@ -58,8 +58,12 @@ const generateCSV = async () => {
 
 
     result.rows.forEach(row => {
-      const processedRow = preprocessRow(row);
-      console.log({ processedRow })
+      if (row.enrollment_date) {
+        row.enrollment_date = row.enrollment_date.toISOString();
+      }
+      if (row.date_of_assessment) {
+        row.date_of_assessment = row.date_of_assessment.toISOString();
+      }
       csvStream.write(processedRow);
     });
 
