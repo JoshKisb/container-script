@@ -35,6 +35,9 @@ const preprocessRow = (row) => {
   if (processedRow.enrollment_date) {
     processedRow.enrollment_date = `"${processedRow.enrollment_date}"`;
   }
+  if (processedRow.date_of_assessment) {
+    processedRow.date_of_assessment = `"${processedRow.date_of_assessment}"`;
+  }
   return processedRow;
 };
 
