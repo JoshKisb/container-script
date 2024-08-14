@@ -59,6 +59,7 @@ const generateCSV = async () => {
 
     result.rows.forEach(row => {
       const processedRow = preprocessRow(row);
+      console.log({ processedRow })
       csvStream.write(processedRow);
     });
 
