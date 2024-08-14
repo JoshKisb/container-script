@@ -33,10 +33,10 @@ const preprocessRow = (row) => {
   const processedRow = { ...row };
   // Convert date fields to string with quotes
   if (processedRow.enrollment_date) {
-    processedRow.enrollment_date = `"${processedRow.enrollment_date}"`;
+    processedRow.enrollment_date = row.enrollment_date.toISOString();
   }
   if (processedRow.date_of_assessment) {
-    processedRow.date_of_assessment = `"${processedRow.date_of_assessment}"`;
+    processedRow.date_of_assessment = row.date_of_assessment.toISOString();
   }
   return processedRow;
 };
