@@ -64,7 +64,8 @@ const generateCSV = async () => {
       if (row.date_of_assessment) {
         row.date_of_assessment = row.date_of_assessment.toISOString();
       }
-      csvStream.write(processedRow);
+      console.log(row)
+      csvStream.write(row);
     });
 
     csvStream.end();
