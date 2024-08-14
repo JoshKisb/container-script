@@ -13,7 +13,7 @@ const client = new Client({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  // statement_timeout: 120000, // 2 minutes
+  statement_timeout: 300000, // 2 minutes
   // connectionTimeoutMillis: 5000 // 5 seconds for initial connection
 });
 
