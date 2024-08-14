@@ -1,7 +1,7 @@
 // require('dotenv').config();
 const express = require('express');
 const { exec } = require('child_process');
-const { execShellCommand, connectDB, fetchReportData } = require('./util');
+const { execShellCommand, connectDB, generateCSV } = require('./util');
 
 const app = express();
 
