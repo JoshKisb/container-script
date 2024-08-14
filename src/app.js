@@ -1,4 +1,4 @@
-require('dotenv').config();
+// require('dotenv').config();
 const express = require('express');
 const { exec } = require('child_process');
 const { execShellCommand, connectDB, fetchReportData } = require('./util');
