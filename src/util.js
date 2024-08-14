@@ -1,14 +1,19 @@
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const { Client } = require('pg');
+const fs = require('fs');
+const { format } = require('fast-csv');
+const path = require('path');
 
 // PostgreSQL client configuration
 const client = new Client({
-  host: '204.27.60.226',
-  port: 5433,
-  user: 'sk',
-  password: 'sk123',
-  database: 'ovc'
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  // statement_timeout: 120000, // 2 minutes
+  // connectionTimeoutMillis: 5000 // 5 seconds for initial connection
 });
 
 // Connect to PostgreSQL
@@ -22,11 +27,27 @@ const connectDB = async () => {
   }
 };
 
-// Query the view
-const fetchReportData = async (limit = 100) => {
+// Fetch data and generate CSV
+const generateCSV = async () => {
+  const filePath = path.join(__dirname, 'report.csv');
+  const writeStream = fs.createWriteStream(filePath);
+  const csvStream = format({ headers: true });
+
+  csvStream.pipe(writeStream).on('end', () => process.exit());
+
   try {
-    const result = await client.query('SELECT x.* FROM public.program_instance_base_view x LIMIT 100');
-    return result.rows;
+    const result = await client.query(`
+      SELECT x.* 
+      FROM public.program_instance_base_view x
+    `);
+
+    result.rows.forEach(row => {
+      csvStream.write(row);
+    });
+
+    csvStream.end();
+    
+    return filePath;
   } catch (err) {
     console.error('Query error', err.stack);
     throw err;
@@ -43,4 +64,4 @@ const execShellCommand = async (cmd) => {
     }
 };
 
-module.exports = { execShellCommand, connectDB, fetchReportData };
+module.exports = { execShellCommand, connectDB, generateCSV };
