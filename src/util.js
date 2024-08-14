@@ -4,6 +4,7 @@ const { Client } = require('pg');
 const fs = require('fs');
 const { format } = require('fast-csv');
 const path = require('path');
+// const result = require('./sample');
 
 // PostgreSQL client configuration
 const client = new Client({
@@ -27,6 +28,16 @@ const connectDB = async () => {
   }
 };
 
+// Preprocess rows to handle date fields
+const preprocessRow = (row) => {
+  const processedRow = { ...row };
+  // Convert date fields to string with quotes
+  if (processedRow.enrollment_date) {
+    processedRow.enrollment_date = `"${processedRow.enrollment_date}"`;
+  }
+  return processedRow;
+};
+
 // Fetch data and generate CSV
 const generateCSV = async () => {
   const filePath = path.join(__dirname, 'report.csv');
@@ -39,10 +50,13 @@ const generateCSV = async () => {
     const result = await client.query(`
       SELECT x.* 
       FROM public.program_instance_base_view x
+      LIMIT 2
     `);
 
+
     result.rows.forEach(row => {
-      csvStream.write(row);
+      const processedRow = preprocessRow(row);
+      csvStream.write(processedRow);
     });
 
     csvStream.end();
