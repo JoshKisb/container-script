@@ -47,7 +47,7 @@ const generateCSV = async () => {
   const writeStream = fs.createWriteStream(filePath);
   const csvStream = format({ headers: true });
 
-  csvStream.pipe(writeStream).on('end', () => {});
+  csvStream.pipe(writeStream).on('end', () => process.exit());
 
   try {
     // const result = await client.query(`
