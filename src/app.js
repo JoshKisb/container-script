@@ -18,24 +18,10 @@ app.get('/download-report', (req, res, next) => {
 }, async (req, res) => {
     try {
         const filePath = await generateCSV();
-
-        // Set headers for the response
-        res.setHeader('Content-Disposition', `attachment; filename=${path.basename(filePath)}`);
-        res.setHeader('Content-Type', 'text/csv');
-    
-        // Create a read stream and pipe it to the response
-        const fileStream = fs.createReadStream(filePath);
-        fileStream.pipe(res);
-    
-        // Cleanup: remove the file after sending it
-        fileStream.on('end', () => {
-          fs.unlink(filePath, (err) => {
-            if (err) console.error('Error removing file:', err);
-          });
-        });
-    } catch (err) {
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
+        res.download(filePath);
+      } catch (err) {
+        res.status(500).send('Error generating report');
+      }
 });
 
 // Route to check the status of the container
