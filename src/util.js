@@ -47,7 +47,7 @@ const generateCSV = async () => {
   const writeStream = fs.createWriteStream(filePath);
   const csvStream = format({ headers: true });
 
-  csvStream.pipe(writeStream).on('end', () => {});
+  csvStream.pipe(writeStream).on('end', () => process.exit());
 
   try {
     const result = await client.query(`
@@ -67,7 +67,7 @@ const generateCSV = async () => {
 
       row.segments = "";
       console.log(row)
-      csvStream.write(row);
+      csvStream.write({ header1: 'value1a', header2: 'value2a' });
     });
 
     csvStream.end();
