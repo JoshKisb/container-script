@@ -4,6 +4,7 @@ const { Client } = require('pg');
 const fs = require('fs');
 const { format } = require('fast-csv');
 const path = require('path');
+const Papa = require('papaparse');
 // const result = require('./sample');
 
 // PostgreSQL client configuration
@@ -41,14 +42,12 @@ const preprocessRow = (row) => {
   return processedRow;
 };
 
+
+
 // Fetch data and generate CSV
 const generateCSV = async () => {
   const filePath = path.join(__dirname, 'report.csv');
-  const writeStream = fs.createWriteStream(filePath);
-  const csvStream = format({ headers: true });
-
-  csvStream.pipe(writeStream).on('end', () => process.exit());
-
+  
   try {
     // const result = await client.query(`
     //   SELECT x.* 
@@ -68,9 +67,21 @@ const generateCSV = async () => {
     //   row.segments = "";
     //   console.log(row)
     // });
-    
-      csvStream.write({ header1: 'value1a', header2: 'value2a' });
-    csvStream.end();
+
+    const dummyData = [
+      { id: 1, name: 'John Doe', enrollment_date: '2022-03-22T05:00:00.000Z', primarycaregiver: 0 },
+      { id: 2, name: 'Jane Doe', enrollment_date: '2024-04-22T05:00:00.000Z', primarycaregiver: 1 }
+    ];
+    // Convert query result to CSV using PapaParse
+    const csv = Papa.unparse(dummyData, {
+      quotes: true, // Automatically wrap fields in quotes if necessary
+    });
+
+    // Write the CSV to a file
+    fs.writeFileSync(filePath, csv);
+
+    console.log('CSV file created successfully:', filePath);
+
     
     return filePath;
   } catch (err) {
