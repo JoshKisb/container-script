@@ -50,26 +50,26 @@ const generateCSV = async () => {
   csvStream.pipe(writeStream).on('end', () => process.exit());
 
   try {
-    const result = await client.query(`
-      SELECT x.* 
-      FROM public.program_instance_base_view x
-      LIMIT 2
-    `);
+    // const result = await client.query(`
+    //   SELECT x.* 
+    //   FROM public.program_instance_base_view x
+    //   LIMIT 2
+    // `);
 
 
-    result.rows.forEach(row => {
-      if (row.enrollment_date) {
-        row.enrollment_date = row.enrollment_date.toISOString();
-      }
-      if (row.date_of_assessment) {
-        row.date_of_assessment = row.date_of_assessment.toISOString();
-      }
+    // result.rows.forEach(row => {
+    //   if (row.enrollment_date) {
+    //     row.enrollment_date = row.enrollment_date.toISOString();
+    //   }
+    //   if (row.date_of_assessment) {
+    //     row.date_of_assessment = row.date_of_assessment.toISOString();
+    //   }
 
-      row.segments = "";
-      console.log(row)
+    //   row.segments = "";
+    //   console.log(row)
+    // });
+    
       csvStream.write({ header1: 'value1a', header2: 'value2a' });
-    });
-
     csvStream.end();
     
     return filePath;
