@@ -13,7 +13,7 @@ connectDB().catch(err => {
 });
 
 app.get('/download-report', (req, res, next) => {
-    req.setTimeout(120000);  // 2 minutes
+    req.setTimeout(600000);  // 10 minutes
     next();
 }, async (req, res) => {
     try {
