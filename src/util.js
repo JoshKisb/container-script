@@ -48,7 +48,7 @@ const generateCSV = async () => {
     const result = await client.query(`
       SELECT x.* 
       FROM public.program_instance_base_view x
-      LIMIT 2000
+      LIMIT 4000
     `);
 
     // Extract headers from result.fields
