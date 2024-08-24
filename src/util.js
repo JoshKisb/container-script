@@ -48,8 +48,7 @@ const generateCSV = async () => {
     const result = await client.query(`
       SELECT x.* 
       FROM public.program_instance_base_view x
-      WHERE natonal ='ICYD - Uganda'
-      LIMIT 50
+      LIMIT 1000
     `);
 
     // Extract headers from result.fields
