@@ -34,7 +34,7 @@ let cache = {
 };
 
 // Fetch data and generate CSV
-const generateCSV = async (orgunits = null) => {
+const generateCSV = async (orgs = null) => {
   const filePath = path.join(__dirname, 'report.csv');
   const currentTime = Date.now();
 
@@ -51,6 +51,7 @@ const generateCSV = async (orgunits = null) => {
 
     const queryParams = [];
 
+    const orgunits = Array.isArray(orgs) ? orgs : [orgs];
     console.log("orgs", orgunits);
 
     if (!!orgunits && orgunits.length > 0) {
