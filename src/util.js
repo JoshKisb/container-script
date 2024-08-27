@@ -12,8 +12,8 @@ const client = new Client({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  statement_timeout: 600000, // 5 minutes
-  connectionTimeoutMillis: 5000 // 5 seconds for initial connection
+  statement_timeout: 720000, // 12 minutes
+  connectionTimeoutMillis: 10000 // 10 seconds for initial connection
 });
 
 // Connect to PostgreSQL
