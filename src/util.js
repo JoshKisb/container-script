@@ -59,6 +59,8 @@ const generateCSV = async (orgunits = null) => {
 
     query += ` LIMIT 10000`;
 
+    console.log("Query: ", query);
+
     const result = await client.query(query, queryParams);
 
     // Extract headers from result.fields
