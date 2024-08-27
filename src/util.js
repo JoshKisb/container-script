@@ -34,7 +34,7 @@ let cache = {
 };
 
 // Fetch data and generate CSV
-const generateCSV = async () => {
+const generateCSV = async (orgunits = null) => {
   const filePath = path.join(__dirname, 'report.csv');
   const currentTime = Date.now();
 
@@ -45,11 +45,21 @@ const generateCSV = async () => {
   }
 
   try {
-    const result = await client.query(`
+    let query = `
       SELECT x.* 
-      FROM public.program_instance_base_view x
-      LIMIT 10000
-    `);
+      FROM public.program_instance_base_view x`;
+
+    const queryParams = [];
+
+    if (orgunits && orgunits.length > 0) {
+      const placeholders = orgunits.map((_, index) => `$${index + 1}`).join(', ');
+      query += ` WHERE "subcounty/division_uid" IN (${placeholders})`;
+      queryParams.push(...orgunits);
+    }
+
+    query += ` LIMIT 10000`;
+
+    const result = await client.query(query, queryParams);
 
     // Extract headers from result.fields
     const headers = result.fields.map(field => field.name);
