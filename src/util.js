@@ -12,7 +12,7 @@ const client = new Client({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  statement_timeout: 300000, // 5 minutes
+  statement_timeout: 600000, // 5 minutes
   connectionTimeoutMillis: 5000 // 5 seconds for initial connection
 });
 
@@ -57,7 +57,7 @@ const generateCSV = async (orgunits = null) => {
       queryParams.push(...orgunits);
     }
 
-    query += ` LIMIT 10000`;
+    query += ` LIMIT 5000`;
 
     console.log("Query: ", query);
 
