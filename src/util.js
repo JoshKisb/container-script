@@ -51,7 +51,9 @@ const generateCSV = async (orgunits = null) => {
 
     const queryParams = [];
 
-    if (orgunits && orgunits.length > 0) {
+    console.log("orgs", orgunits);
+
+    if (!!orgunits && orgunits.length > 0) {
       const placeholders = orgunits.map((_, index) => `$${index + 1}`).join(', ');
       query += ` WHERE "subcounty/division_uid" IN (${placeholders})`;
       queryParams.push(...orgunits);
