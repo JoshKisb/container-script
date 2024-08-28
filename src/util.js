@@ -60,7 +60,7 @@ const generateCSV = async (orgs = null) => {
       queryParams.push(...orgunits);
     }
 
-    query += ` LIMIT 5000`;
+    query += ` LIMIT 10000`;
 
     console.log("Query: ", query);
 
