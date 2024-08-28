@@ -16,7 +16,7 @@ app.get('/download-report', (req, res, next) => {
     req.setTimeout(600000);  // 10 minutes
     next();
 }, async (req, res) => {
-    const orgQueryString = req.query.org;
+    const orgQueryString = req.query.org || "[]";
     try {
         const orgArray = JSON.parse(orgQueryString);
         const filePath = await generateCSV(orgArray);
