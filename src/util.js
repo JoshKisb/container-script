@@ -31,6 +31,7 @@ const connectDB = async () => {
 let cache = {
   filePath: null,
   timestamp: null,
+  key: null,
 };
 
 // Fetch data and generate CSV
@@ -38,8 +39,10 @@ const generateCSV = async (orgs = null, code = null, period = null) => {
   const filePath = path.join(__dirname, 'report.csv');
   const currentTime = Date.now();
 
+  const cacheKey = JSON.stringify({ orgs, code, period });
+
   // Check if the cached file is still valid
-  if (cache.filePath && currentTime - cache.timestamp < 300000) { // 5 minutes
+  if (cache.filePath && cache.key === cacheKey && currentTime - cache.timestamp < 300000) { // 5 minutes
     console.log('Serving cached CSV file:', cache.filePath);
     return cache.filePath;
   }
@@ -100,10 +103,9 @@ const generateCSV = async (orgs = null, code = null, period = null) => {
     console.log('CSV file created successfully:', filePath);
 
     // Update the cache with the new file path and timestamp
-    cache = {
-      filePath: filePath,
-      timestamp: currentTime,
-    };
+    cache.filePath = filePath;
+    cache.timestamp = currentTime;
+    cache.key = cacheKey;
 
     return filePath;
   } catch (err) {
