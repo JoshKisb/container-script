@@ -20,6 +20,8 @@ app.get('/download-report', (req, res, next) => {
     const orgQueryString = req.query.org || "[]";
     const codeQueryString = req.query.code;
     const periodQueryString = req.query.period;
+
+    console.log({periodQueryString});
     try {
         const orgArray = parseOrgQueryString(orgQueryString);
         const period = !!periodQueryString ? JSON.parse(periodQueryString) : null;
