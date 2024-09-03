@@ -124,4 +124,15 @@ const execShellCommand = async (cmd) => {
 	}
 };
 
-module.exports = { execShellCommand, connectDB, generateCSV };
+function parseOrgQueryString(input) {
+  const trimmedInput = input.trim();
+
+  // Check if the input is a JSON array by looking for square brackets
+  if (trimmedInput.startsWith('[') && trimmedInput.endsWith(']')) {
+    return JSON.parse(trimmedInput);
+  }
+
+  return [trimmedInput.replace(/^"|"$/g, '')];
+}
+
+module.exports = { execShellCommand, connectDB, generateCSV, parseOrgQueryString };

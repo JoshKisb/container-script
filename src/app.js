@@ -1,7 +1,7 @@
 // require('dotenv').config();
 const express = require('express');
 const { exec } = require('child_process');
-const { execShellCommand, connectDB, generateCSV } = require('./util');
+const { execShellCommand, connectDB, generateCSV, parseOrgQueryString } = require('./util');
 
 const app = express();
 
@@ -12,6 +12,7 @@ connectDB().catch(err => {
     process.exit(1);  
 });
 
+
 app.get('/download-report', (req, res, next) => {
     req.setTimeout(1200000);  // 20 minutes
     next();
@@ -20,7 +21,7 @@ app.get('/download-report', (req, res, next) => {
     const codeQueryString = req.query.code;
     const periodQueryString = req.query.period;
     try {
-        const orgArray = JSON.parse(orgQueryString);
+        const orgArray = parseOrgQueryString(orgQueryString);
         const period = !!periodQueryString ? JSON.parse(periodQueryString) : null;
         const filePath = await generateCSV(orgArray, codeQueryString, period);
         res.download(filePath);
