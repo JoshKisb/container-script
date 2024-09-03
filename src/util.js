@@ -53,7 +53,7 @@ const generateCSV = async (orgs = null, code = null, period = null) => {
     const conditions = [];
 
     const orgunits = Array.isArray(orgs) ? orgs : [orgs];
-    // console.log("orgs", orgunits);
+    console.log({ orgs: orgunits, code, period });
 
     if (!!orgunits && orgunits.length > 0) {
       const placeholders = orgunits.map((_, index) => `$${index + 1}`).join(', ');

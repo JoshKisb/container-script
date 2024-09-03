@@ -25,6 +25,7 @@ app.get('/download-report', (req, res, next) => {
         const filePath = await generateCSV(orgArray, codeQueryString, period);
         res.download(filePath);
       } catch (err) {
+        console.error("Error: ", err);
         res.status(500).send('Error generating report');
       }
 });
