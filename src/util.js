@@ -73,7 +73,8 @@ const generateCSV = async (orgs = null, code = null, period = null) => {
     }
 
     if (conditions.length > 0) {
-      query += ` WHERE ${conditions.join(' AND ')}`;
+      query += queryParams.length > 0 ? ' AND' : ' WHERE';
+      query += ` ${conditions.join(' AND ')}`;
     }
 
     query += ` LIMIT 10000`;
