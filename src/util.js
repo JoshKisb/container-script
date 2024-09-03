@@ -66,8 +66,9 @@ const generateCSV = async (orgs = null, code = null, period = null) => {
       queryParams.push(code);
     }
 
-    if (!!period && !!period.start && !!period.end) {
-      conditions.push(`"enrollment_date" BETWEEN $${queryParams.length + 1} AND $${queryParams.length + 2}`);
+    if (!!period && period.start && period.end) {
+      conditions.push(`"enrollment_date" >= $${queryParams.length + 1}`);
+      conditions.push(`"enrollment_date" <= $${queryParams.length + 2}`);
       queryParams.push(period.start);
       queryParams.push(period.end);
     }
