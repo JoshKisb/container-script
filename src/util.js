@@ -34,7 +34,7 @@ let cache = {
 };
 
 // Fetch data and generate CSV
-const generateCSV = async (orgs = null) => {
+const generateCSV = async (orgs = null, code = null, period = null) => {
   const filePath = path.join(__dirname, 'report.csv');
   const currentTime = Date.now();
 
@@ -52,12 +52,27 @@ const generateCSV = async (orgs = null) => {
     const queryParams = [];
 
     const orgunits = Array.isArray(orgs) ? orgs : [orgs];
-    console.log("orgs", orgunits);
+    // console.log("orgs", orgunits);
 
     if (!!orgunits && orgunits.length > 0) {
       const placeholders = orgunits.map((_, index) => `$${index + 1}`).join(', ');
       query += ` WHERE "parish_uid" IN (${placeholders})`;
       queryParams.push(...orgunits);
+    }
+
+    if (!!code) {
+      conditions.push(`"beneficiaryid" = $${queryParams.length + 1}`);
+      queryParams.push(code);
+    }
+
+    if (!!period && !!period.start && !!period.end) {
+      conditions.push(`"enrollment_date" BETWEEN $${queryParams.length + 1} AND $${queryParams.length + 2}`);
+      queryParams.push(period.start);
+      queryParams.push(period.end);
+    }
+
+    if (conditions.length > 0) {
+      query += ` WHERE ${conditions.join(' AND ')}`;
     }
 
     query += ` LIMIT 10000`;
