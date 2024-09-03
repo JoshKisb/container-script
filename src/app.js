@@ -17,9 +17,12 @@ app.get('/download-report', (req, res, next) => {
     next();
 }, async (req, res) => {
     const orgQueryString = req.query.org || "[]";
+    const codeQueryString = req.query.code;
+    const periodQueryString = req.query.period;
     try {
         const orgArray = JSON.parse(orgQueryString);
-        const filePath = await generateCSV(orgArray);
+        const period = !!periodQueryString ? JSON.parse(periodQueryString) : null;
+        const filePath = await generateCSV(orgArray, codeQueryString, period);
         res.download(filePath);
       } catch (err) {
         res.status(500).send('Error generating report');
