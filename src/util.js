@@ -50,6 +50,7 @@ const generateCSV = async (orgs = null, code = null, period = null) => {
       FROM public.program_instance_base_view x`;
 
     const queryParams = [];
+    const conditions = [];
 
     const orgunits = Array.isArray(orgs) ? orgs : [orgs];
     // console.log("orgs", orgunits);
