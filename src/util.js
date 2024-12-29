@@ -35,11 +35,20 @@ let cache = {
 };
 
 // Fetch data and generate CSV
-const generateCSV = async (orgs = null, code = null, period = null, startRec = 1, endRec = 10000) => {
+const generateCSV = async (orgs = null, code = null, period = null, startRec = 1, endRec = 20000) => {
   const filePath = path.join(__dirname, 'report.csv');
   const currentTime = Date.now();
 
   const cacheKey = JSON.stringify({ orgs, code, period });
+  // Extract start date from the period object
+  const startDate = period ? period.start : null;
+  const endDate = period ? period.end : null;
+
+  // Extract orgunit (could be multiple values, so array handling is needed)
+  const orgunits = Array.isArray(orgs) ? orgs : [orgs];
+  const orgUnit = orgunits[0];
+  // const startRec = 1;
+  // const endRec = 20000;
 
   // Check if the cached file is still valid
   if (cache.filePath && cache.key === cacheKey && currentTime - cache.timestamp < 300000) { // 5 minutes
@@ -48,46 +57,104 @@ const generateCSV = async (orgs = null, code = null, period = null, startRec = 1
   }
 
   try {
-    let query = `
-      SELECT x.* 
-      FROM public.program_instance_base_view x`;
+
+    //`SELECT x.* 
+    //FROM program_instance_base_view x 
+    //WHERE x."Beneficiary ID" IN (
+    //   'KM-02/KD-6975-01', 
+    //    'KM-04/ND-7436-02', 
+    //   'KM-04/ND-5519-02', 
+    //   'KM-04/ND-1519-04', 
+    //    'KM-04/ND-7564-02', 
+    //    'KM-04/ND-7754-02', 
+    //    'KM-04/ND-7638-05', 
+    //    'KM-04/ND-9513-05', 
+    //    'KM-04/ND-6263-02', 
+    //    'KM-04/ND-6558-02'
+    //)`;
+
 
     const queryParams = [];
     const conditions = [];
 
-    const orgunits = Array.isArray(orgs) ? orgs : [orgs];
+    console.log({ Org_Unit: orgUnit, Start_Date: startDate});
     console.log({ orgs: orgunits, code, period });
 
-    if (!!orgunits && orgunits.length > 0) {
-      const placeholders = orgunits.map((_, index) => `$${index + 1}`).join(', ');
-      query += ` WHERE "parish_uid" IN (${placeholders})`;
-      queryParams.push(...orgunits);
-    }
+    let query;
 
-    if (!!code) {
-      conditions.push(`"beneficiaryid" = $${queryParams.length + 1}`);
-      queryParams.push(code);
-    }
+      // Check if orgunit contains the word 'division'
+        if (orgUnit.toLowerCase().includes('division')) {
+          // Check if startRec and endRec are set
+          if (startRec && endRec) {
+              query = `
+                  SELECT * FROM get_indicators(${startRec}, ${endRec}, '"''${startDate}'' AND ''${endDate}''', '"subcounty/division" IN (''${orgUnit}'')')
+              `;
+          } else {
+              // Alert message for missing startRec and endRec
+              alert("Start Record and End Record not set");
+              // Use default values if startRec and endRec are not set
+              query = `
+                  SELECT * FROM get_indicators(1, 100000, '"''2024-10-01'' AND ''2024-12-31''', '"subcounty/division" IN (''${orgUnit}'')')
+              `;
+          }
+      } else {
+          // Check if startRec and endRec are set
+          if (startRec && endRec) {
+              query = `
+                  SELECT * FROM get_indicators(${startRec}, ${endRec}, '"''${startDate}'' AND ''${endDate}''', '"parish" IN (''${orgUnit}'')')
+              `;
+          } else {
+              // Alert message for missing startRec and endRec
+              alert("Start Record and End Record not set");
+              // Use default values if startRec and endRec are not set
+              query = `
+                  SELECT * FROM get_indicators(1, 10000, '"''2024-10-01'' AND ''2024-12-31''', '"parish" IN (''${orgUnit}'')')
+              `;
+          }
+      }
 
-    if (!!period && period.start && period.end) {
-      conditions.push(`"enrollment_date" >= $${queryParams.length + 1}`);
-      conditions.push(`"enrollment_date" <= $${queryParams.length + 2}`);
-      queryParams.push(period.start);
-      queryParams.push(period.end);
-    }
+      // let query = //`
+      // SELECT x.*
+      // FROM program_instance_base_table x`;
+      // `SELECT x.* FROM get_indicators(1, 1000, '"Enrollment Date" >= '2024-07-06' AND "Parish" = 'Bukesa'') x`;
+      // `SELECT * FROM get_indicators(0, 1000, '"''2024-01-01'' AND ''2024-12-31''', '"parish" IN (''Bukesa'')')` ;
+      // `SELECT *
+      //   FROM get_indicators(
+      //       0,
+      //       1000,
+      //       '''2024-01-01'' AND ''2024-12-31''', '"subcounty/division" = ''Nakawa Division'''
+      //   )`;
+        // `SELECT * FROM get_indicators(0, 1000)`
 
-    if (conditions.length > 0) {
-      query += queryParams.length > 0 ? ' AND' : ' WHERE';
-      query += ` ${conditions.join(' AND ')}`;
-    }
+    //    if (!!orgunits && orgunits.length > 0) {
+    //      const placeholders = orgunits.map((_, index) => `$${index + 1}`).join(', ');
+    //query += ` WHERE "subcounty/division_uid" IN (${placeholders})`;
+    //      query += ` WHERE "subcounty/division_uid" IN (${placeholders})`;
+    //	queryParams.push(...orgunits);
+    //    }
 
-    const offset = startRec - 1;
-    const limit = endRec - startRec + 1;
-    query += ` LIMIT ${limit} OFFSET ${offset}`;
+    //    if (!!code) {
+    //      conditions.push(`"beneficiaryid" = $${queryParams.length + 1}`);
+    //      queryParams.push(code);
+    //    }
+
+    //    if (!!period && period.start && period.end) {
+    //      conditions.push(`"enrollment_date" >= $${queryParams.length + 1}`);
+    //      conditions.push(`"enrollment_date" <= $${queryParams.length + 2}`);
+    //      queryParams.push(period.start);
+    //      queryParams.push(period.end);
+    //    }
+
+    //    if (conditions.length > 0) {
+    //      query += queryParams.length > 0 ? ' AND' : ' WHERE';
+    //      query += ` ${conditions.join(' AND ')}`;
+    //    }
+
+    //    query += ` LIMIT 10000`;
 
     console.log("Query: ", query);
 
-    const result = await client.query(query, queryParams);
+    const result = await client.query(query);
 
     // Extract headers from result.fields
     const headers = result.fields.map(field => field.name);
@@ -106,7 +173,7 @@ const generateCSV = async (orgs = null, code = null, period = null, startRec = 1
 
     // Update the cache with the new file path and timestamp
     cache.filePath = filePath;
-    cache.timestamp = currentTime;
+    cache.timestamp = 0; //currentTime;
     cache.key = cacheKey;
 
     return filePath;
@@ -118,16 +185,16 @@ const generateCSV = async (orgs = null, code = null, period = null, startRec = 1
 
 // Utility function to execute shell commands and log output
 const execShellCommand = async (cmd) => {
-	try {
-		const { stdout, stderr } = await exec(cmd);
-		return { stdout, stderr };
-	} catch (error) {
-		return {
-			stdout: error.stdout,
-			stderr: error.stderr,
-			error: error.message,
-		};
-	}
+  try {
+    const { stdout, stderr } = await exec(cmd);
+    return { stdout, stderr };
+  } catch (error) {
+    return {
+      stdout: error.stdout,
+      stderr: error.stderr,
+      error: error.message,
+    };
+  }
 };
 
 function parseOrgQueryString(input) {
