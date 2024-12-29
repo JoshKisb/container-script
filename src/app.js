@@ -20,12 +20,14 @@ app.get('/download-report', (req, res, next) => {
     const orgQueryString = req.query.org || "[]";
     const codeQueryString = req.query.code;
     const periodQueryString = req.query.period;
+    const startRec = req.query.startRecord || null;
+    const endRec = req.query.endRecord || null;
 
     console.log({periodQueryString});
     try {
         const orgArray = parseOrgQueryString(orgQueryString);
         const period = !!periodQueryString ? JSON.parse(periodQueryString) : null;
-        const filePath = await generateCSV(orgArray, codeQueryString, period);
+        const filePath = await generateCSV(orgArray, codeQueryString, period, startRec, endRec);
         res.download(filePath);
       } catch (err) {
         console.error("Error: ", err);

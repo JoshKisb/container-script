@@ -35,7 +35,7 @@ let cache = {
 };
 
 // Fetch data and generate CSV
-const generateCSV = async (orgs = null, code = null, period = null) => {
+const generateCSV = async (orgs = null, code = null, period = null, startRec = 1, endRec = 10000) => {
   const filePath = path.join(__dirname, 'report.csv');
   const currentTime = Date.now();
 
@@ -81,7 +81,9 @@ const generateCSV = async (orgs = null, code = null, period = null) => {
       query += ` ${conditions.join(' AND ')}`;
     }
 
-    query += ` LIMIT 10000`;
+    const offset = startRec - 1;
+    const limit = endRec - startRec + 1;
+    query += ` LIMIT ${limit} OFFSET ${offset}`;
 
     console.log("Query: ", query);
 
